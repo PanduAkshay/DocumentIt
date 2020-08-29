@@ -1,0 +1,6 @@
+{% for entry in entries %}
+<p class="rounded showP">(id={{entry.id}})@{{entry.date_time.date()}}:<br/>
+{{entry.username}}&apos;s Entry:<br/>
+{{entry.content}}
+</p>
+{% endfor %}
