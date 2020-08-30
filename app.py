@@ -90,8 +90,9 @@ def update():
 				id_e=int(request.form['ID'])
 				content_p=str(request.form['content'])
 				row=db.session.query(Doc).get(id_e)
-				row.content=content_p
-				db.session.commit()
+				if row!=None:
+					row.content=content_p
+					db.session.commit()
 			return redirect(url_for("update"))
 		entries=db.session.query(Doc).order_by(Doc.date_time.desc()).limit(3).all()
 		return render_template("fetch.html",entries=entries)
