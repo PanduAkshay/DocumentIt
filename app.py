@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import Form
 from wtforms import TextField,TextAreaField, SubmitField, validators, ValidationError
-from datetime import datetime
+from datetime import datetime, timedelta
 from pytz import timezone
 
 
@@ -12,7 +12,7 @@ app.secret_key="mysecretkey"
 db=SQLAlchemy(app)
 
 class doc_form(Form):
-	content=TextAreaField("Entry:",[validators.InputRequired("INPUT REQUIRED")])
+	content=TextAreaField("Entry:",[validators.InputRequired()])
 	submit=SubmitField("Submit")
 
 
@@ -51,12 +51,14 @@ def docs():
 @app.route('/fetch')
 def fetch():
 	if "username" in session:
-		if "From" in request.args and "Till" in request.args:
+		if "From" in request.args and "Till" in request.args and (len(request.args.get('From'))>0 and len(request.args.get('Till'))>0):
 			frm=list(map(int,request.args.get('From').split('-')))
 			til=list(map(int,request.args.get('Till').split('-')))
-		frm=datetime(frm[0],frm[1],frm[2])
-		til=datetime(til[0],til[1],til[2]+1)	
-		entries=db.session.query(Doc).filter(Doc.date_time>=frm, Doc.date_time<=til).order_by(Doc.date_time.desc()).all()
+			frm=datetime(frm[0],frm[1],frm[2])
+			til=datetime(til[0],til[1],til[2])+timedelta(days=1)
+			entries=db.session.query(Doc).filter(Doc.date_time>=frm, Doc.date_time<=til).order_by(Doc.date_time.desc()).all()
+		else:
+			entries=db.session.query(Doc).filter(Doc.date_time>=(datetime.utcnow()-timedelta(days=1))).order_by(Doc.date_time.desc()).all()
 		return render_template("fetch.html",entries=entries)
 	else:
 		return "Access Denied"
