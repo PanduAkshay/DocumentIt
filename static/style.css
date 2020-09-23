@@ -33,15 +33,7 @@ input{
 a{
   color:#000000;
 }
-button{
-  background-color: #C5CACA ;
-  border-radius: 2em;
-  -moz-border-radius:2em;
-  -o-border-radius:2em;
-  -webkit-border-radius: 2em;
 
-
-}
 button:focus{
   outline: none;
 }

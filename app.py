@@ -23,7 +23,7 @@ class login_form(Form):
 class Doc(db.Model):
 	id=db.Column(db.Integer, primary_key=True)
 	username=db.Column(db.String(40),nullable=False)
-	content=db.Column(db.String(500), nullable=False)
+	content=db.Column(db.String(2000), nullable=False)
 	date_time=db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
 	def __repr__(self):
@@ -96,7 +96,24 @@ def update():
 					row.content=content_p
 					db.session.commit()
 			return redirect(url_for("update"))
-		entries=db.session.query(Doc).order_by(Doc.date_time.desc()).limit(3).all()
+		entries=db.session.query(Doc).order_by(Doc.date_time.desc()).limit(5).all()
+		return render_template("fetch.html",entries=entries)
+	else:
+		return "Access Denied"
+
+@app.route('/delete',methods=["POST","GET"])
+def delete():
+	if "username" in session:
+		if request.method=="POST":
+
+			if ("ID" in request.form) and (str(request.form["ID"]).isdigit()):
+				id_e=int(request.form['ID'])
+				row=db.session.query(Doc).get(id_e)
+				if row!=None:
+					db.session.delete(row)
+					db.session.commit()
+			return redirect(url_for("delete"))
+		entries=db.session.query(Doc).order_by(Doc.date_time.desc()).limit(5).all()
 		return render_template("fetch.html",entries=entries)
 	else:
 		return "Access Denied"

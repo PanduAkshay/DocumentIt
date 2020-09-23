@@ -30,8 +30,10 @@
           <input type="date" id="From" name="From" required />
           <label for="Till" >Till:</label>
           <input type="date" id="Till" name="Till" required />
-          <button onclick="javascript:loadResults();return false;" form="null" >Fetch</button>
+          <button class="btn btn-primary rounded-pill" onclick="javascript:loadResults();return false;" form="null" >Fetch</button>
     </form>
+    <hr />
+    <br />
     <div class="container" >
       <div class="row">
         <div class="col-xs-12 col-md-8" id="results">
@@ -49,7 +51,19 @@
             <label for="content">Entry:</label><br />
             <textarea rows="12" cols="40" id="content" name="content"></textarea>
             </p>
-            <button onclick="javascript:updateEntry();return false;" form="null">Update</button>
+            <button class="btn btn-primary rounded-pill" onclick="javascript:updateEntry();return false;" form="null">Update</button>
+            </fieldset>
+          </form>
+          <hr />
+          <br />
+          <form method="post">
+            <fieldset>
+            <legend>Delete Entry:</legend>
+            <p>
+            <label for="DID">Enter Id:</label>
+            <input type="text" id="DId" name="DID" />
+            </p>
+            <button class="btn btn-primary rounded-pill" onclick="javascript:deleteEntry();return false;" form="null">Delete</button>
             </fieldset>
           </form>
         </div>
@@ -72,6 +86,7 @@
         Fetch.send();
         return false;
       }
+
       function updateEntry(){
         var Fetch=new XMLHttpRequest();
         Fetch.onreadystatechange= function(){
@@ -84,6 +99,20 @@
         Fetch.open("POST","{{url_for('update')}}", true);
         Fetch.setRequestHeader("Content-type","application/x-www-form-urlencoded")
         Fetch.send("ID="+ID+"&content="+content);
+        return false;
+      }
+
+      function deleteEntry(){
+        var Fetch=new XMLHttpRequest();
+        Fetch.onreadystatechange= function(){
+          if (this.readyState==4 && this.status==200){
+            document.getElementById("results").innerHTML=this.responseText;
+          }
+        };
+        var ID=document.getElementById('DId').value;
+        Fetch.open("POST","{{url_for('delete')}}", true);
+        Fetch.setRequestHeader("Content-type","application/x-www-form-urlencoded")
+        Fetch.send("ID="+ID);
         return false;
       }
     </script>
